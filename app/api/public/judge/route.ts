@@ -1,3 +1,6 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getEventBySlug, getSpotById } from "@/lib/event-service";
 import { judgePhoto } from "@/lib/judge-service";
@@ -55,39 +58,35 @@ export async function POST(req: Request) {
     const duplicate = await isDuplicateRecentSubmission({
       participantId: body.participantId,
       eventSlug: body.eventSlug,
-      spotId: body.spotId,
-      imageHash,
+      hash: imageHash,
     });
 
-// 開発中は同じ写真の再送防止を一時的にオフ
-// if (duplicate) {
-//   return NextResponse.json(
-//     {
-//       ok: false,
-//       reason: "同じ写真が送信済みです。別の構図で撮り直してください。",
-//     },
-//     { status: 409 }
-//   );
-// }
+    // 開発中は同じ写真の再送防止を一時的にオフにしたい場合はこの if をコメントアウト
+    // if (duplicate) {
+    //   return NextResponse.json(
+    //     {
+    //       ok: false,
+    //       reason: "同じ写真が送信済みです。別の構図で撮り直してください。",
+    //     },
+    //     { status: 409 }
+    //   );
+    // }
 
-    const cacheKey = buildJudgeCacheKey({
-      eventSlug: body.eventSlug,
-      spotId: body.spotId,
-      imageHash,
-    });
+    const cacheKey = buildJudgeCacheKey(
+      body.eventSlug,
+      body.spotId,
+      imageHash
+    );
 
     const cached = await getJudgeCache(cacheKey);
+
     if (cached) {
       await recordJudgeAttempt({
         participantId: body.participantId,
         eventSlug: body.eventSlug,
-        spotId: body.spotId,
-        imageHash,
-        createdAt: new Date().toISOString(),
-        usedCache: true,
       });
 
-      return NextResponse.json(cached.result);
+      return NextResponse.json(cached);
     }
 
     const event = await getEventBySlug(body.eventSlug);
@@ -106,43 +105,32 @@ export async function POST(req: Request) {
       );
     }
 
-const refImageUrl = new URL(spot.refImageUrl, req.url).toString();
+    const refImageUrl = new URL(spot.refImageUrl, req.url).toString();
 
-const result = await judgePhoto({
-  spotTitle: spot.title,
-  refImageUrl,
-  imageDataUrl: body.imageDataUrl,
-});
-
-    await setJudgeCache({
-      key: cacheKey,
-      eventSlug: body.eventSlug,
-      spotId: body.spotId,
-      imageHash,
-      result,
-      createdAt: new Date().toISOString(),
+    const result = await judgePhoto({
+      spotTitle: spot.title,
+      refImageUrl,
+      imageDataUrl: body.imageDataUrl,
     });
+
+    await setJudgeCache(cacheKey, result);
 
     await recordJudgeAttempt({
       participantId: body.participantId,
       eventSlug: body.eventSlug,
-      spotId: body.spotId,
-      imageHash,
-      createdAt: new Date().toISOString(),
-      usedCache: false,
     });
 
     return NextResponse.json(result);
-} catch (error) {
-  console.error("judge route error:", error);
+  } catch (error) {
+    console.error("judge route error:", error);
 
-  return NextResponse.json(
-    {
-      ok: false,
-      reason: "判定中にエラーが発生しました。",
-      detail: error instanceof Error ? error.message : String(error),
-    },
-    { status: 500 }
-  );
-}
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "判定中にエラーが発生しました。",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
+  }
 }

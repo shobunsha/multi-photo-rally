@@ -1,16 +1,24 @@
 import "server-only";
 import { Redis } from "@upstash/redis";
 
-const url = process.env.UPSTASH_REDIS_REST_URL;
-const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+let _kv: Redis | null = null;
 
-if (!url || !token) {
-  throw new Error(
-    "Missing UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN"
-  );
+export function getKv() {
+  if (_kv) return _kv;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!url || !token) {
+    throw new Error(
+      "Missing UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN"
+    );
+  }
+
+  _kv = new Redis({
+    url,
+    token,
+  });
+
+  return _kv;
 }
-
-export const kv = new Redis({
-  url,
-  token,
-});

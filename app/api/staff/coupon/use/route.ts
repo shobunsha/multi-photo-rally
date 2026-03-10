@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const result = await redeemCoupon({
       eventSlug: body.eventSlug,
       code: body.code.trim(),
-      staffName: body.staffName,
+      staffName: body.staffName || "staff",
     });
 
     if (!result.ok) {
@@ -37,9 +37,9 @@ export async function POST(req: Request) {
         {
           ok: false,
           message: "このクーポンはすでに使用済みです。",
-          used_at: result.entry.usedAt,
-          used_by: result.entry.usedBy,
-          code: result.entry.code,
+          used_at: result.entry?.usedAt,
+          used_by: result.entry?.usedBy,
+          code: result.entry?.code ?? body.code,
         },
         { status: 409 }
       );

@@ -1,119 +1,100 @@
-import "server-only";
+import { getKv } from "@/lib/kv";
 
-import { kv } from "@/lib/kv";
-import { readJsonFile, writeJsonFile } from "@/lib/file-db";
-
-export type CouponRedeemEntry = {
-  eventSlug: string;
-  code: string;
-  usedAt: string;
-  usedBy: string;
-};
-
-const REDEEM_FILE = "coupon-redeems.json";
-const LIST_MAX = 1000;
-const REDEEM_TTL_SECONDS = 60 * 60 * 24 * 90; // 90日
-
-function hasKvEnv() {
-  return !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
-}
-
-function redeemKey(eventSlug: string, code: string) {
-  return `coupon:redeem:${eventSlug}:${code}`;
-}
-
-function redeemListKey(eventSlug: string) {
-  return `coupon:redeems:${eventSlug}`;
-}
-
-export async function redeemCoupon(params: {
-  eventSlug: string;
-  code: string;
-  staffName?: string;
-}) {
-  const usedAt = new Date().toISOString();
-  const usedBy = params.staffName?.trim() || "staff";
-
-  const entry: CouponRedeemEntry = {
-    eventSlug: params.eventSlug,
-    code: params.code,
-    usedAt,
-    usedBy,
-  };
-
-  if (hasKvEnv()) {
-    const existing = await kv.get<CouponRedeemEntry>(
-      redeemKey(params.eventSlug, params.code)
-    );
-
-    if (existing) {
-      return {
-        ok: false as const,
-        alreadyUsed: true as const,
-        entry: existing,
+type RedeemResult =
+  | {
+      ok: true;
+      entry: {
+        code: string;
+        usedAt: string;
+        usedBy: string;
       };
     }
-
-    await kv.set(redeemKey(params.eventSlug, params.code), entry, {
-      ex: REDEEM_TTL_SECONDS,
-    });
-
-    await kv.lpush(redeemListKey(params.eventSlug), JSON.stringify(entry));
-    await kv.ltrim(redeemListKey(params.eventSlug), 0, LIST_MAX - 1);
-    await kv.expire(redeemListKey(params.eventSlug), REDEEM_TTL_SECONDS);
-
-    return {
-      ok: true as const,
-      entry,
+  | {
+      ok: false;
+      reason: string;
+      entry?: {
+        code: string;
+        usedAt: string;
+        usedBy: string;
+      };
     };
-  }
 
-  const all = await readJsonFile<CouponRedeemEntry[]>(REDEEM_FILE, []);
-  const existing = all.find(
-    (x) => x.eventSlug === params.eventSlug && x.code === params.code
-  );
+export function makeCouponCode(participantId: string) {
+  const tail = participantId.replace(/-/g, "").slice(-12).toUpperCase();
+  return `AI-RALLY-${tail}`;
+}
+
+export async function redeemCoupon({
+  eventSlug,
+  code,
+  staffName,
+}: {
+  eventSlug: string;
+  code: string;
+  staffName: string;
+}): Promise<RedeemResult> {
+  const kv = getKv();
+
+  const key = `coupon:${eventSlug}:${code}`;
+
+  const existing = await kv.get<{
+    code: string;
+    usedAt: string;
+    usedBy: string;
+  }>(key);
 
   if (existing) {
     return {
-      ok: false as const,
-      alreadyUsed: true as const,
+      ok: false,
+      reason: "already_used",
       entry: existing,
     };
   }
 
-  const next = [entry, ...all].slice(0, LIST_MAX);
-  await writeJsonFile(REDEEM_FILE, next);
+  const entry = {
+    code,
+    usedAt: new Date().toISOString(),
+    usedBy: staffName,
+  };
+
+  await kv.set(key, entry);
 
   return {
-    ok: true as const,
+    ok: true,
     entry,
   };
 }
 
-export async function listRecentRedeems(params: {
+export async function listRecentRedeems({
+  eventSlug,
+  limit = 100,
+}: {
   eventSlug: string;
   limit?: number;
 }) {
-  const limit = params.limit ?? 100;
+  const kv = getKv();
 
-  if (hasKvEnv()) {
-    const rows = await kv.lrange<string>(redeemListKey(params.eventSlug), 0, limit - 1);
+  const pattern = `coupon:${eventSlug}:*`;
 
-    return rows
-      .map((row) => {
-        try {
-          return JSON.parse(row) as CouponRedeemEntry;
-        } catch {
-          return null;
-        }
-      })
-      .filter((x): x is CouponRedeemEntry => !!x);
+  const keys = await kv.keys(pattern);
+
+  const entries = [];
+
+  for (const key of keys) {
+    const data = await kv.get<{
+      code: string;
+      usedAt: string;
+      usedBy: string;
+    }>(key);
+
+    if (data) {
+      entries.push(data);
+    }
   }
 
-  const all = await readJsonFile<CouponRedeemEntry[]>(REDEEM_FILE, []);
+  entries.sort((a, b) => {
+    return new Date(b.usedAt).getTime() - new Date(a.usedAt).getTime();
+  });
 
-  return all
-    .filter((x) => x.eventSlug === params.eventSlug)
-    .sort((a, b) => new Date(b.usedAt).getTime() - new Date(a.usedAt).getTime())
-    .slice(0, limit);
+  return entries.slice(0, limit);
 }
