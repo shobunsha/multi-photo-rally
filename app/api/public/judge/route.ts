@@ -106,11 +106,19 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await judgePhoto({
-      spotTitle: spot.title,
-      refImageUrl: spot.refImageUrl,
-      imageDataUrl: body.imageDataUrl,
-    });
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://multi-photo-rally.vercel.app";
+
+const refImageUrl = spot.refImageUrl.startsWith("http")
+  ? spot.refImageUrl
+  : `${siteUrl}${spot.refImageUrl}`;
+
+const result = await judgePhoto({
+  spotTitle: spot.title,
+  refImageUrl,
+  imageDataUrl: body.imageDataUrl,
+});
 
     await setJudgeCache({
       key: cacheKey,
