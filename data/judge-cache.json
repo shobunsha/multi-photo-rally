@@ -97,5 +97,27 @@
       "reason": "明らかに異なる場所と被写体です。"
     },
     "createdAt": "2026-03-09T08:06:40.199Z"
+  },
+  {
+    "key": "fujisawa:fujisawa_spot1:a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "eventSlug": "fujisawa",
+    "spotId": "fujisawa_spot1",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "result": {
+      "ok": false,
+      "reason": "明らかに別の場所の画像です。"
+    },
+    "createdAt": "2026-03-10T03:07:51.544Z"
+  },
+  {
+    "key": "fujisawa:fujisawa_spot2:a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "eventSlug": "fujisawa",
+    "spotId": "fujisawa_spot2",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "result": {
+      "ok": false,
+      "reason": "明らかに別の場所であるため"
+    },
+    "createdAt": "2026-03-10T03:08:14.175Z"
   }
 ]

@@ -48,6 +48,7 @@ export default function AdminNewEventPage() {
         publicTitle,
         storyTitle,
         storyBody,
+        backgroundImageUrl: "/demo/base-bg.jpg",
         couponTitle,
         couponDescription,
         couponPrefix,
@@ -88,7 +89,7 @@ export default function AdminNewEventPage() {
                   setSlug(makeSlug(v));
                 }
               }}
-              placeholder="住宅展示場 平塚会場"
+              placeholder="会場名を入力"
               className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3"
             />
           </div>
@@ -98,7 +99,7 @@ export default function AdminNewEventPage() {
             <input
               value={slug}
               onChange={(e) => setSlug(makeSlug(e.target.value))}
-              placeholder="hiratsuka-housing"
+              placeholder="公開URL"
               className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3"
             />
             <div className="mt-1 text-xs text-white/50">
@@ -111,7 +112,7 @@ export default function AdminNewEventPage() {
             <input
               value={publicTitle}
               onChange={(e) => setPublicTitle(e.target.value)}
-              placeholder="HIRATSUKA HOUSING MISSION"
+              placeholder="TITLE HOUSING MISSION"
               className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3"
             />
           </div>
@@ -121,7 +122,7 @@ export default function AdminNewEventPage() {
             <input
               value={storyTitle}
               onChange={(e) => setStoryTitle(e.target.value)}
-              placeholder="平塚会場のチェックポイントを巡ろう"
+              placeholder="チェックポイントを巡ろう"
               className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3"
             />
           </div>

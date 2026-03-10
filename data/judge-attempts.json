@@ -542,5 +542,21 @@
     "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
     "createdAt": "2026-03-10T01:03:28.585Z",
     "usedCache": true
+  },
+  {
+    "participantId": "ec7dbd27-3fdf-4e5a-aa2d-454c316bd781",
+    "eventSlug": "fujisawa",
+    "spotId": "fujisawa_spot1",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "createdAt": "2026-03-10T03:07:51.550Z",
+    "usedCache": false
+  },
+  {
+    "participantId": "ec7dbd27-3fdf-4e5a-aa2d-454c316bd781",
+    "eventSlug": "fujisawa",
+    "spotId": "fujisawa_spot2",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "createdAt": "2026-03-10T03:08:14.179Z",
+    "usedCache": false
   }
 ]
