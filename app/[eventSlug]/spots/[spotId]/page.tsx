@@ -16,6 +16,16 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+function getOrCreateParticipantId(eventSlug: string) {
+  const key = `participant_id:${eventSlug}`;
+  const existing = localStorage.getItem(key);
+  if (existing) return existing;
+
+  const id = crypto.randomUUID();
+  localStorage.setItem(key, id);
+  return id;
+}
+
 type JudgeState = "idle" | "judging" | "success" | "ng";
 
 export default function SpotPage({
@@ -119,6 +129,8 @@ export default function SpotPage({
       return;
     }
 
+    const participantId = getOrCreateParticipantId(eventSlug);
+
     setBusy(true);
     setJudgeState("judging");
     setJudgeComment("");
@@ -135,7 +147,7 @@ export default function SpotPage({
         body: JSON.stringify({
           eventSlug,
           spotId: spot.id,
-          participantId: localStorage.getItem(`participant_id:${eventSlug}`) || "",
+          participantId,
           imageDataUrl,
         }),
       });

@@ -558,5 +558,37 @@
     "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
     "createdAt": "2026-03-10T03:08:14.179Z",
     "usedCache": false
+  },
+  {
+    "participantId": "8138be0a-167e-43ed-bd5d-3142a162bf18",
+    "eventSlug": "test05",
+    "spotId": "test05_spot1",
+    "imageHash": "a04a4283a303df92056f0df995731f683adbd4a7dff96068279436730e667058",
+    "createdAt": "2026-03-10T06:07:56.274Z",
+    "usedCache": false
+  },
+  {
+    "participantId": "8138be0a-167e-43ed-bd5d-3142a162bf18",
+    "eventSlug": "test05",
+    "spotId": "test05_spot2",
+    "imageHash": "7edfb5bb218f1b120d6bddee6a66d79bd6f1a996e2cec11cf79b0750cd12f359",
+    "createdAt": "2026-03-10T06:08:22.337Z",
+    "usedCache": false
+  },
+  {
+    "participantId": "8138be0a-167e-43ed-bd5d-3142a162bf18",
+    "eventSlug": "test05",
+    "spotId": "test05_spot3",
+    "imageHash": "1fc9d0a5ce08829893274ab8f357547ed0c92d50fea05df1d85dc44da4b4c734",
+    "createdAt": "2026-03-10T06:08:39.703Z",
+    "usedCache": false
+  },
+  {
+    "participantId": "8138be0a-167e-43ed-bd5d-3142a162bf18",
+    "eventSlug": "test05",
+    "spotId": "test05_spot1",
+    "imageHash": "a04a4283a303df92056f0df995731f683adbd4a7dff96068279436730e667058",
+    "createdAt": "2026-03-10T06:08:51.634Z",
+    "usedCache": true
   }
 ]
