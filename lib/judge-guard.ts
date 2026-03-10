@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import { kv } from "@vercel/kv";
-import { readJsonFile, writeJsonFile } from "@/lib/file-db";
 import type { JudgeResult } from "@/lib/types";
 
 type JudgeCacheEntry = {
@@ -21,26 +20,15 @@ type JudgeAttemptEntry = {
   usedCache: boolean;
 };
 
-const CACHE_FILE = "judge-cache.json";
-const ATTEMPT_FILE = "judge-attempts.json";
+const CACHE_TTL = 60 * 60 * 24 * 7;
+const ATTEMPT_TTL = 60 * 60 * 24;
 
-const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7; // 7日
-const ATTEMPT_TTL_SECONDS = 60 * 60 * 24; // 24時間
-const ATTEMPT_LIST_MAX = 300;
-
-function hasKvEnv() {
-  return !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
-}
-
-function cacheRedisKey(key: string) {
+function cacheKey(key: string) {
   return `judge:cache:${key}`;
 }
 
-function attemptsRedisKey(params: {
-  eventSlug: string;
-  participantId: string;
-}) {
-  return `judge:attempts:${params.eventSlug}:${params.participantId}`;
+function attemptKey(params: { eventSlug: string; participantId: string }) {
+  return `judge:attempt:${params.eventSlug}:${params.participantId}`;
 }
 
 export function hashImageDataUrl(imageDataUrl: string) {
@@ -56,43 +44,24 @@ export function buildJudgeCacheKey(params: {
 }
 
 export async function getJudgeCache(key: string): Promise<JudgeCacheEntry | null> {
-  if (hasKvEnv()) {
-    const data = await kv.get<JudgeCacheEntry>(cacheRedisKey(key));
-    return data ?? null;
-  }
-
-  const all = await readJsonFile<JudgeCacheEntry[]>(CACHE_FILE, []);
-  return all.find((x) => x.key === key) ?? null;
+  const data = await kv.get<JudgeCacheEntry>(cacheKey(key));
+  return data ?? null;
 }
 
 export async function setJudgeCache(entry: JudgeCacheEntry): Promise<void> {
-  if (hasKvEnv()) {
-    await kv.set(cacheRedisKey(entry.key), entry, { ex: CACHE_TTL_SECONDS });
-    return;
-  }
-
-  const all = await readJsonFile<JudgeCacheEntry[]>(CACHE_FILE, []);
-  const next = all.filter((x) => x.key !== entry.key);
-  next.push(entry);
-  await writeJsonFile(CACHE_FILE, next.slice(-1000));
+  await kv.set(cacheKey(entry.key), entry, {
+    ex: CACHE_TTL,
+  });
 }
 
 export async function recordJudgeAttempt(entry: JudgeAttemptEntry): Promise<void> {
-  if (hasKvEnv()) {
-    const key = attemptsRedisKey({
-      eventSlug: entry.eventSlug,
-      participantId: entry.participantId,
-    });
+  const key = attemptKey({
+    eventSlug: entry.eventSlug,
+    participantId: entry.participantId,
+  });
 
-    await kv.rpush(key, JSON.stringify(entry));
-    await kv.ltrim(key, -ATTEMPT_LIST_MAX, -1);
-    await kv.expire(key, ATTEMPT_TTL_SECONDS);
-    return;
-  }
-
-  const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
-  all.push(entry);
-  await writeJsonFile(ATTEMPT_FILE, all.slice(-3000));
+  await kv.rpush(key, JSON.stringify(entry));
+  await kv.expire(key, ATTEMPT_TTL);
 }
 
 export async function isDuplicateRecentSubmission(params: {
@@ -105,130 +74,76 @@ export async function isDuplicateRecentSubmission(params: {
   const withinMs = params.withinMs ?? 10 * 60 * 1000;
   const now = Date.now();
 
-  if (hasKvEnv()) {
-    const key = attemptsRedisKey({
-      eventSlug: params.eventSlug,
-      participantId: params.participantId,
-    });
+  const key = attemptKey({
+    eventSlug: params.eventSlug,
+    participantId: params.participantId,
+  });
 
-const rows = await kv.lrange<string>(key, 0, -1);
-    const all = rows
-      .map((row) => {
-        try {
-          return JSON.parse(row) as JudgeAttemptEntry;
-        } catch {
-          return null;
-        }
-      })
-      .filter((x): x is JudgeAttemptEntry => !!x);
+  const rows = await kv.lrange<string>(key, 0, -1);
 
-    return all.some((x) => {
-      return (
+  for (const row of rows) {
+    try {
+      const x = JSON.parse(row) as JudgeAttemptEntry;
+
+      if (
         x.participantId === params.participantId &&
         x.eventSlug === params.eventSlug &&
         x.spotId === params.spotId &&
         x.imageHash === params.imageHash &&
         now - new Date(x.createdAt).getTime() <= withinMs
-      );
-    });
+      ) {
+        return true;
+      }
+    } catch {}
   }
 
-  const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
-
-  return all.some((x) => {
-    return (
-      x.participantId === params.participantId &&
-      x.eventSlug === params.eventSlug &&
-      x.spotId === params.spotId &&
-      x.imageHash === params.imageHash &&
-      now - new Date(x.createdAt).getTime() <= withinMs
-    );
-  });
+  return false;
 }
 
 export async function checkRateLimit(params: {
   participantId: string;
   eventSlug: string;
 }) {
+  const key = attemptKey({
+    eventSlug: params.eventSlug,
+    participantId: params.participantId,
+  });
+
+  const rows = await kv.lrange<string>(key, 0, -1);
   const now = Date.now();
 
-  if (hasKvEnv()) {
-    const key = attemptsRedisKey({
-      eventSlug: params.eventSlug,
-      participantId: params.participantId,
-    });
-
-const rows = await kv.lrange<string>(key, 0, -1);
-    const related = rows
-      .map((row) => {
-        try {
-          return JSON.parse(row) as JudgeAttemptEntry;
-        } catch {
-          return null;
-        }
-      })
-      .filter((x): x is JudgeAttemptEntry => !!x);
-
-    const lastOne = related[related.length - 1];
-
-    if (lastOne) {
-      const diff = now - new Date(lastOne.createdAt).getTime();
-      if (diff < 8000) {
-        return {
-          ok: false as const,
-          reason: "連続送信が速すぎます。8秒ほど待ってから再送してください。",
-        };
+  const attempts = rows
+    .map((r) => {
+      try {
+        return JSON.parse(r) as JudgeAttemptEntry;
+      } catch {
+        return null;
       }
-    }
+    })
+    .filter(Boolean) as JudgeAttemptEntry[];
 
-    const recent60s = related.filter(
-      (x) => now - new Date(x.createdAt).getTime() <= 60 * 1000
-    );
+  const last = attempts[attempts.length - 1];
 
-    if (recent60s.length >= 6) {
-      return {
-        ok: false as const,
-        reason: "短時間の送信回数が多いため、一度時間を置いてください。",
-      };
-    }
-
-    return {
-      ok: true as const,
-    };
-  }
-
-  const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
-
-  const related = all.filter(
-    (x) =>
-      x.participantId === params.participantId &&
-      x.eventSlug === params.eventSlug
-  );
-
-  const lastOne = related[related.length - 1];
-
-  if (lastOne) {
-    const diff = now - new Date(lastOne.createdAt).getTime();
+  if (last) {
+    const diff = now - new Date(last.createdAt).getTime();
     if (diff < 8000) {
       return {
         ok: false as const,
-        reason: "連続送信が速すぎます。8秒ほど待ってから再送してください。",
+        reason: "連続送信が速すぎます。8秒ほど待ってください。",
       };
     }
   }
 
-  const recent60s = related.filter(
-    (x) => now - new Date(x.createdAt).getTime() <= 60 * 1000
+  const recent60 = attempts.filter(
+    (x) => now - new Date(x.createdAt).getTime() < 60000
   );
 
-  if (recent60s.length >= 6) {
+  if (recent60.length >= 6) {
     return {
       ok: false as const,
-      reason: "短時間の送信回数が多いため、一度時間を置いてください。",
+      reason: "送信回数が多すぎます。少し待ってください。",
     };
   }
 
-  return {
-    ok: true as const,
-  };
+  return { ok: true as const };
 }
