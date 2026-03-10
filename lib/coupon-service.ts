@@ -24,6 +24,16 @@ function redeemListKey(eventSlug: string) {
   return `coupon:redeems:${eventSlug}`;
 }
 
+export function makeCouponCode(params: {
+  eventSlug: string;
+  participantId: string;
+  prefix?: string;
+}) {
+  const safePrefix = (params.prefix || "CP").trim().toUpperCase();
+  const tail = params.participantId.replace(/-/g, "").slice(-8).toUpperCase();
+  return `${safePrefix}-${tail}`;
+}
+
 export async function redeemCoupon(params: {
   eventSlug: string;
   code: string;
