@@ -1,3 +1,5 @@
+import "server-only";
+
 import { kv } from "@vercel/kv";
 import { readJsonFile, writeJsonFile } from "@/lib/file-db";
 
@@ -22,16 +24,6 @@ function redeemKey(eventSlug: string, code: string) {
 
 function redeemListKey(eventSlug: string) {
   return `coupon:redeems:${eventSlug}`;
-}
-
-export function makeCouponCode(params: {
-  eventSlug: string;
-  participantId: string;
-  prefix?: string;
-}) {
-  const safePrefix = (params.prefix || "CP").trim().toUpperCase();
-  const tail = params.participantId.replace(/-/g, "").slice(-8).toUpperCase();
-  return `${safePrefix}-${tail}`;
 }
 
 export async function redeemCoupon(params: {

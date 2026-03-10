@@ -16,7 +16,7 @@ import {
   saveProgress,
   storageKeys,
 } from "@/lib/storage";
-import { makeCouponCode } from "@/lib/coupon-service";
+import { makeCouponCode } from "@/lib/coupon-code";
 
 export default function CardPage({
   params,
@@ -234,8 +234,11 @@ export default function CardPage({
 
     const prefix = data.event.coupon?.prefix ?? "AI-RALLY";
 
-    return makeCouponCode(prefix, participantId);
-  }, [data, participantId]);
+return makeCouponCode({
+  eventSlug,
+  participantId,
+  prefix,
+});  }, [data, participantId]);
 
   const houseSrc = useMemo(() => {
     if (completedCount <= 0) return `/house_0.png?${houseAssetVersion}`;
