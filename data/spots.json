@@ -1,0 +1,110 @@
+[
+  {
+    "id": "spot1",
+    "eventId": "evt_fujisawa",
+    "title": "スポット1",
+    "description": "見本と同じ場所を撮影しよう",
+    "order": 1,
+    "refImageUrl": "/uploads/evt_fujisawa/spot1-1772893190317.jpg",
+    "thumbnailUrl": "/uploads/evt_fujisawa/spot1-1772893190317.jpg",
+    "hintText": "広場の見え方に注目",
+    "energyGain": 34,
+    "active": true
+  },
+  {
+    "id": "spot2",
+    "eventId": "evt_fujisawa",
+    "title": "スポット2",
+    "description": "別の角度でもOK",
+    "order": 2,
+    "refImageUrl": "/uploads/evt_fujisawa/spot2-1772893200610.jpg",
+    "thumbnailUrl": "/uploads/evt_fujisawa/spot2-1772893200610.jpg",
+    "hintText": "建物の形がヒント",
+    "energyGain": 33,
+    "active": true
+  },
+  {
+    "id": "spot3",
+    "eventId": "evt_fujisawa",
+    "title": "スポット3",
+    "description": "最後のエネルギースポット",
+    "order": 3,
+    "refImageUrl": "/uploads/evt_fujisawa/spot3-1772893206929.jpg",
+    "thumbnailUrl": "/uploads/evt_fujisawa/spot3-1772893206929.jpg",
+    "hintText": "周囲の景色をよく見て",
+    "energyGain": 33,
+    "active": true
+  },
+  {
+    "id": "house1",
+    "eventId": "evt_housing_1",
+    "title": "モデルハウスA",
+    "description": "同じ場所を撮影",
+    "order": 1,
+    "refImageUrl": "/demo/ref1.jpg",
+    "thumbnailUrl": "/demo/ref1.jpg",
+    "hintText": "玄関まわりがヒント",
+    "energyGain": 34,
+    "active": true
+  },
+  {
+    "id": "house2",
+    "eventId": "evt_housing_1",
+    "title": "モデルハウスB",
+    "description": "特徴的な場所を見つけよう",
+    "order": 2,
+    "refImageUrl": "/demo/ref2.jpg",
+    "thumbnailUrl": "/demo/ref2.jpg",
+    "hintText": "窓や外壁の形に注目",
+    "energyGain": 33,
+    "active": true
+  },
+  {
+    "id": "house3",
+    "eventId": "evt_housing_1",
+    "title": "モデルハウスC",
+    "description": "ラストミッション",
+    "order": 3,
+    "refImageUrl": "/demo/ref3.jpg",
+    "thumbnailUrl": "/demo/ref3.jpg",
+    "hintText": "外観の特徴を探そう",
+    "energyGain": 33,
+    "active": true
+  },
+  {
+    "id": "minamiaoyama_spot1",
+    "eventId": "evt_minamiaoyama",
+    "title": "スポット1",
+    "description": "見本と同じ場所を撮影",
+    "order": 1,
+    "refImageUrl": "/demo/ref1.jpg",
+    "thumbnailUrl": "/demo/ref1.jpg",
+    "hintText": "見本画像をあとで差し替えてください",
+    "energyGain": 34,
+    "active": true
+  },
+  {
+    "id": "minamiaoyama_spot2",
+    "eventId": "evt_minamiaoyama",
+    "title": "スポット2",
+    "description": "見本と同じ場所を撮影",
+    "order": 2,
+    "refImageUrl": "/demo/ref2.jpg",
+    "thumbnailUrl": "/demo/ref2.jpg",
+    "hintText": "見本画像をあとで差し替えてください",
+    "energyGain": 33,
+    "active": true
+  },
+  {
+    "id": "minamiaoyama_spot3",
+    "eventId": "evt_minamiaoyama",
+    "title": "スポット3",
+    "description": "見本と同じ場所を撮影",
+    "order": 3,
+    "refImageUrl": "/demo/ref3.jpg",
+    "thumbnailUrl": "/demo/ref3.jpg",
+    "hintText": "見本画像をあとで差し替えてください",
+    "energyGain": 33,
+    "active": true
+  }
+]

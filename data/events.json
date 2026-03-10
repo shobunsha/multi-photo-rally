@@ -1,0 +1,95 @@
+[
+  {
+    "id": "evt_fujisawa",
+    "slug": "fujisawa",
+    "name": "藤沢産業フェスタ",
+    "publicTitle": "FUJISAWA ENERGY MISSION",
+    "status": "published",
+    "theme": {
+      "backgroundImageUrl": "/demo/fujisawa-bg.jpg",
+      "storyTitle": "未来都市ふじさわのエネルギーを修復せよ",
+      "storyBody": "あなたはエネルギー・エージェント。街に残された3つのエネルギースポットを修復しよう。",
+      "primaryColor": "#0ea5e9",
+      "accentColor": "#22c55e"
+    },
+    "rally": {
+      "requiredSpotCount": 3,
+      "successEnergyPerSpot": 34,
+      "introEnabled": true,
+      "soundEnabled": false
+    },
+    "coupon": {
+      "enabled": true,
+      "title": "コンプリート特典",
+      "description": "受付で景品と交換できます。",
+      "prefix": "FJM",
+      "rewardType": "coupon",
+      "qrMode": "code",
+      "redeemNote": "スタッフにQRコードをご提示ください。"
+    },
+    "createdAt": "2026-03-07T00:00:00.000Z",
+    "updatedAt": "2026-03-07T00:00:00.000Z"
+  },
+  {
+    "id": "evt_housing_1",
+    "slug": "abc-housing-tsujido",
+    "name": "住宅展示場 春フェア",
+    "publicTitle": "HOUSING ENERGY MISSION",
+    "status": "published",
+    "theme": {
+      "backgroundImageUrl": "/demo/housing-bg.jpg",
+      "storyTitle": "モデルハウスを巡ってエネルギーを集めよう",
+      "storyBody": "会場内にあるチェックポイントを見つけて撮影し、ミッションをクリアしてください。",
+      "primaryColor": "#f97316",
+      "accentColor": "#eab308"
+    },
+    "rally": {
+      "requiredSpotCount": 3,
+      "successEnergyPerSpot": 34,
+      "introEnabled": true,
+      "soundEnabled": false
+    },
+    "coupon": {
+      "enabled": true,
+      "title": "来場特典",
+      "description": "受付でノベルティ引換ができます。",
+      "prefix": "AHTS",
+      "rewardType": "gift",
+      "qrMode": "code",
+      "redeemNote": "景品交換所でスタッフにご提示ください。"
+    },
+    "createdAt": "2026-03-07T00:00:00.000Z",
+    "updatedAt": "2026-03-07T00:00:00.000Z"
+  },
+  {
+    "id": "evt_minamiaoyama",
+    "slug": "minamiaoyama",
+    "name": "住宅展示場　南青山",
+    "publicTitle": "minamiaoyama",
+    "status": "published",
+    "theme": {
+      "backgroundImageUrl": "/demo/housing-bg.jpg",
+      "storyTitle": "巡ろう",
+      "storyBody": "撮影",
+      "primaryColor": "#f97316",
+      "accentColor": "#eab308"
+    },
+    "rally": {
+      "requiredSpotCount": 3,
+      "successEnergyPerSpot": 34,
+      "introEnabled": true,
+      "soundEnabled": false
+    },
+    "coupon": {
+      "enabled": true,
+      "title": "来場特典",
+      "description": "受付でノベルティ引換ができます。",
+      "prefix": "NEW",
+      "rewardType": "gift",
+      "qrMode": "code",
+      "redeemNote": "景品交換所でスタッフにご提示ください。"
+    },
+    "createdAt": "2026-03-09T14:02:31.807Z",
+    "updatedAt": "2026-03-09T14:02:31.807Z"
+  }
+]

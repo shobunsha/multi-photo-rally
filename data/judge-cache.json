@@ -1,0 +1,101 @@
+[
+  {
+    "key": "abc-housing-tsujido:house2:7edfb5bb218f1b120d6bddee6a66d79bd6f1a996e2cec11cf79b0750cd12f359",
+    "eventSlug": "abc-housing-tsujido",
+    "spotId": "house2",
+    "imageHash": "7edfb5bb218f1b120d6bddee6a66d79bd6f1a996e2cec11cf79b0750cd12f359",
+    "result": {
+      "ok": true,
+      "reason": "同じ場所で撮影された画像です。"
+    },
+    "createdAt": "2026-03-08T05:26:32.826Z"
+  },
+  {
+    "key": "abc-housing-tsujido:house3:1fc9d0a5ce08829893274ab8f357547ed0c92d50fea05df1d85dc44da4b4c734",
+    "eventSlug": "abc-housing-tsujido",
+    "spotId": "house3",
+    "imageHash": "1fc9d0a5ce08829893274ab8f357547ed0c92d50fea05df1d85dc44da4b4c734",
+    "result": {
+      "ok": true,
+      "reason": "画像は同じ場所で撮影されたと判断できます。"
+    },
+    "createdAt": "2026-03-08T05:26:48.856Z"
+  },
+  {
+    "key": "fujisawa:spot1:a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "eventSlug": "fujisawa",
+    "spotId": "spot1",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "result": {
+      "ok": true,
+      "reason": "見本画像と参加者画像は同一です。"
+    },
+    "createdAt": "2026-03-08T05:33:43.830Z"
+  },
+  {
+    "key": "fujisawa:spot3:ae4ae77059a9e22af6c92600c75adb456d5f7f9d4eef674a484265b02020d652",
+    "eventSlug": "fujisawa",
+    "spotId": "spot3",
+    "imageHash": "ae4ae77059a9e22af6c92600c75adb456d5f7f9d4eef674a484265b02020d652",
+    "result": {
+      "ok": true,
+      "reason": "同じ場所で撮影された画像です。"
+    },
+    "createdAt": "2026-03-08T05:34:43.752Z"
+  },
+  {
+    "key": "fujisawa:spot2:6eb63768202b3cd1870020dac18dec00fa58899f824c3d62a60c9d99784d1f3d",
+    "eventSlug": "fujisawa",
+    "spotId": "spot2",
+    "imageHash": "6eb63768202b3cd1870020dac18dec00fa58899f824c3d62a60c9d99784d1f3d",
+    "result": {
+      "ok": true,
+      "reason": "見本画像と参加者画像は同じサックスです。"
+    },
+    "createdAt": "2026-03-08T05:38:36.059Z"
+  },
+  {
+    "key": "fujisawa:spot3:a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "eventSlug": "fujisawa",
+    "spotId": "spot3",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "result": {
+      "ok": false,
+      "reason": "明らかに別の場所で撮影された画像です。"
+    },
+    "createdAt": "2026-03-08T05:39:00.939Z"
+  },
+  {
+    "key": "abc-housing-tsujido:house1:a04a4283a303df92056f0df995731f683adbd4a7dff96068279436730e667058",
+    "eventSlug": "abc-housing-tsujido",
+    "spotId": "house1",
+    "imageHash": "a04a4283a303df92056f0df995731f683adbd4a7dff96068279436730e667058",
+    "result": {
+      "ok": true,
+      "reason": "画像は同じ場所で撮影されたものです。"
+    },
+    "createdAt": "2026-03-08T05:39:56.034Z"
+  },
+  {
+    "key": "fujisawa:spot2:ae4ae77059a9e22af6c92600c75adb456d5f7f9d4eef674a484265b02020d652",
+    "eventSlug": "fujisawa",
+    "spotId": "spot2",
+    "imageHash": "ae4ae77059a9e22af6c92600c75adb456d5f7f9d4eef674a484265b02020d652",
+    "result": {
+      "ok": false,
+      "reason": "明らかに別の被写体であるため"
+    },
+    "createdAt": "2026-03-08T13:06:28.811Z"
+  },
+  {
+    "key": "hiratsuka:hiratsuka_spot2:a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "eventSlug": "hiratsuka",
+    "spotId": "hiratsuka_spot2",
+    "imageHash": "a86ffcfa185ae30cf6e81184a75192317b309861d680669068f9b7522078f91d",
+    "result": {
+      "ok": false,
+      "reason": "明らかに異なる場所と被写体です。"
+    },
+    "createdAt": "2026-03-09T08:06:40.199Z"
+  }
+]
