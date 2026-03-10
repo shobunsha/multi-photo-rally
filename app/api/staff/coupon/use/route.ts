@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { redeemCoupon } from "@/lib/coupon-service";
 
 type Body = {
   eventSlug: string;
@@ -25,12 +26,31 @@ export async function POST(req: Request) {
       );
     }
 
-    // 仮実装。将来はKVへ保存
+    const result = await redeemCoupon({
+      eventSlug: body.eventSlug,
+      code: body.code.trim(),
+      staffName: body.staffName,
+    });
+
+    if (!result.ok) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "このクーポンはすでに使用済みです。",
+          used_at: result.entry.usedAt,
+          used_by: result.entry.usedBy,
+          code: result.entry.code,
+        },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json({
       ok: true,
-      message: "使用済みにしました（仮実装）。",
-      used_at: new Date().toISOString(),
-      used_by: body.staffName || "staff",
+      message: "使用済みにしました。",
+      used_at: result.entry.usedAt,
+      used_by: result.entry.usedBy,
+      code: result.entry.code,
     });
   } catch {
     return NextResponse.json(
