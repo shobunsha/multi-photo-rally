@@ -23,6 +23,10 @@ type JudgeAttemptEntry = {
 const CACHE_FILE = "judge-cache.json";
 const ATTEMPT_FILE = "judge-attempts.json";
 
+function isVercelRuntime() {
+  return process.env.VERCEL === "1" || !!process.env.VERCEL;
+}
+
 export function hashImageDataUrl(imageDataUrl: string) {
   return crypto.createHash("sha256").update(imageDataUrl).digest("hex");
 }
@@ -36,11 +40,19 @@ export function buildJudgeCacheKey(params: {
 }
 
 export async function getJudgeCache(key: string): Promise<JudgeCacheEntry | null> {
+  if (isVercelRuntime()) {
+    return null;
+  }
+
   const all = await readJsonFile<JudgeCacheEntry[]>(CACHE_FILE, []);
   return all.find((x) => x.key === key) ?? null;
 }
 
 export async function setJudgeCache(entry: JudgeCacheEntry): Promise<void> {
+  if (isVercelRuntime()) {
+    return;
+  }
+
   const all = await readJsonFile<JudgeCacheEntry[]>(CACHE_FILE, []);
   const next = all.filter((x) => x.key !== entry.key);
   next.push(entry);
@@ -48,6 +60,10 @@ export async function setJudgeCache(entry: JudgeCacheEntry): Promise<void> {
 }
 
 export async function recordJudgeAttempt(entry: JudgeAttemptEntry): Promise<void> {
+  if (isVercelRuntime()) {
+    return;
+  }
+
   const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
   all.push(entry);
   await writeJsonFile(ATTEMPT_FILE, all.slice(-3000));
@@ -60,6 +76,10 @@ export async function isDuplicateRecentSubmission(params: {
   imageHash: string;
   withinMs?: number;
 }): Promise<boolean> {
+  if (isVercelRuntime()) {
+    return false;
+  }
+
   const withinMs = params.withinMs ?? 10 * 60 * 1000;
   const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
   const now = Date.now();
@@ -79,6 +99,12 @@ export async function checkRateLimit(params: {
   participantId: string;
   eventSlug: string;
 }) {
+  if (isVercelRuntime()) {
+    return {
+      ok: true as const,
+    };
+  }
+
   const all = await readJsonFile<JudgeAttemptEntry[]>(ATTEMPT_FILE, []);
   const now = Date.now();
 
