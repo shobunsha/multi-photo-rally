@@ -1,6 +1,6 @@
 import "server-only";
 
-import { kv } from "@vercel/kv";
+import { kv } from "@/lib/kv";
 import { readJsonFile, writeJsonFile } from "@/lib/file-db";
 
 export type CouponRedeemEntry = {
