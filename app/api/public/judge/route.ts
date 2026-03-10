@@ -106,13 +106,7 @@ export async function POST(req: Request) {
       );
     }
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://multi-photo-rally.vercel.app";
-
-const refImageUrl = spot.refImageUrl.startsWith("http")
-  ? spot.refImageUrl
-  : `${siteUrl}${spot.refImageUrl}`;
+const refImageUrl = new URL(spot.refImageUrl, req.url).toString();
 
 const result = await judgePhoto({
   spotTitle: spot.title,
@@ -139,12 +133,16 @@ const result = await judgePhoto({
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error("judge route error:", error);
+} catch (error) {
+  console.error("judge route error:", error);
 
-    return NextResponse.json(
-      { ok: false, reason: "判定中にエラーが発生しました。" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    {
+      ok: false,
+      reason: "判定中にエラーが発生しました。",
+      detail: error instanceof Error ? error.message : String(error),
+    },
+    { status: 500 }
+  );
+}
 }
